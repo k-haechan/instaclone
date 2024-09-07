@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:instaclone/src/pages/home.dart';
+import 'package:instaclone/src/pages/search.dart';
 
 import 'components/image_data.dart';
 import 'controller/bottom_nav_controller.dart';
@@ -19,12 +21,13 @@ class App extends GetView<BottomNavController> {
       },
       child: Obx(
         () => Scaffold(
-          appBar: AppBar(),
+          // appBar: AppBar(),
           body: IndexedStack(
             index: controller.pageIndex.value, // 페이지 번호에 따라서 body가 바뀜.
             children: [
-              Container(child: Center(child:Text("HOME"),),),
-              Container(child: Center(child:Text("SEARCH"),),),
+              // Container(child: Center(child:Text("HOME"),),),
+              Home(),
+              Search(),
               Container(child: Center(child:Text("UPLOAD"),),),
               Container(child: Center(child:Text("ACTIVITY"),),),
               Container(child: Center(child:Text("MYPAGE"),),),

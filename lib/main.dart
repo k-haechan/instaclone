@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       enableLog: true,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialBinding: InitBinding(),
+      initialBinding: InitBinding(), // 초기 바인딩 등록 (빈 객체 생성과 유사)
       home: const App(),
     );
   }
