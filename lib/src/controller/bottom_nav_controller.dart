@@ -41,7 +41,9 @@ import 'package:instaclone/src/pages/upload.dart';
 enum PageName { HOME, SEARCH, UPLOAD, ACTIVITY, MYPAGE }
 
 class BottomNavController extends GetxController {
+  static BottomNavController get to => Get.find(); // Static getter to allow global access to the BottomNavController instance
   RxInt pageIndex = 0.obs;
+  GlobalKey<NavigatorState> searchPageNavigationKey = GlobalKey<NavigatorState>();
   List<int> bottomHistory = [0];
 
   void changeBottomNav(int value, {bool hasGesture = true}) {
@@ -67,7 +69,7 @@ class BottomNavController extends GetxController {
     bottomHistory.add(value);
   }
 
-  onPopAction() {
+  willPopAction() async {
     print(bottomHistory);
 
     if (bottomHistory.length == 1) {
@@ -85,10 +87,13 @@ class BottomNavController extends GetxController {
       // SystemNavigator.pop();
       // return true;
     } else {
-      print('뒤로가기');
-      bottomHistory.removeLast();
-      
+      var page = PageName.values[bottomHistory.last]; // 현재 페이지
+      if(page == PageName.SEARCH){
+        var value = await searchPageNavigationKey.currentState!.maybePop(); // Pop할게 있으면
+        if(value) return;
+      }
 
+      bottomHistory.removeLast();
       changeBottomNav(bottomHistory.last, hasGesture: false);
       // return false;
     }

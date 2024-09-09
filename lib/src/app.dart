@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:instaclone/src/pages/home.dart';
-import 'package:instaclone/src/pages/search.dart';
+import 'package:instaclone/src/pages/search/search.dart';
 
 import 'components/image_data.dart';
 import 'controller/bottom_nav_controller.dart';
@@ -17,7 +17,7 @@ class App extends GetView<BottomNavController> {
         if(didPop){
           return; 
         }
-        controller.onPopAction();
+        controller.willPopAction();
       },
       child: Obx(
         () => Scaffold(
@@ -27,7 +27,12 @@ class App extends GetView<BottomNavController> {
             children: [
               // Container(child: Center(child:Text("HOME"),),),
               Home(),
-              Search(),
+              Navigator(
+                key: controller.searchPageNavigationKey,
+                onGenerateRoute: (routeSetting){
+                  return MaterialPageRoute(builder: (context)=>const Search());
+                },
+              ),
               Container(child: Center(child:Text("UPLOAD"),),),
               Container(child: Center(child:Text("ACTIVITY"),),),
               Container(child: Center(child:Text("MYPAGE"),),),
