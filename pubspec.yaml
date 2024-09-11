@@ -39,6 +39,7 @@ dependencies:
   cached_network_image: ^3.4.1
   expandable_text: ^2.3.0
   quiver: ^3.2.2
+  photo_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:

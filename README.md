@@ -21,6 +21,7 @@ samples, guidance on mobile development, and a full API reference.
 - Expanded 위젯 : Expanded는 child가 범위를 최대한 가져갈 수 있도록 해준다. ex_텍스트 입력 Container가 적을 때. 그 길이를 늘려준다.
 - 리스트 생성: 1.[], 2.List.generate(), 3.toList()
 - PreferredSize : AppBar의 사이즈를 설정할 수 있도록 하는 위젯
+- 양 쪽 끝에 배치. leading, action을 사용하지 않아도, Row에서 MainAxisAlginment를 spaceBetween하면 됨.
 
 - 리팩토링 1. IconPath의 image파일을 svg로 변경하면 됨. -> static getter 굳이? static field로 변경
 - Pop 구현을 Get.back()으로 바꾸자.

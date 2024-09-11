@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:instaclone/src/pages/active_history.dart';
 import 'package:instaclone/src/pages/home.dart';
-import 'package:instaclone/src/pages/search/search.dart';
+import 'package:instaclone/src/pages/my_page.dart';
+import 'package:instaclone/src/pages/search.dart';
 
 import 'components/image_data.dart';
 import 'controller/bottom_nav_controller.dart';
@@ -26,16 +28,17 @@ class App extends GetView<BottomNavController> {
             index: controller.pageIndex.value, // 페이지 번호에 따라서 body가 바뀜.
             children: [
               // Container(child: Center(child:Text("HOME"),),),
-              Home(),
+              const Home(),
               Navigator(
                 key: controller.searchPageNavigationKey,
                 onGenerateRoute: (routeSetting){
                   return MaterialPageRoute(builder: (context)=>const Search());
                 },
               ),
-              Container(child: Center(child:Text("UPLOAD"),),),
-              Container(child: Center(child:Text("ACTIVITY"),),),
-              Container(child: Center(child:Text("MYPAGE"),),),
+              Container(), // empty container
+              const ActiveHistory(),
+              const MyPage(),
+              // Container(child: Center(child:Text("MYPAGE"),),),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(

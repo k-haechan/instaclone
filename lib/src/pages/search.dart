@@ -40,7 +40,7 @@ class _SearchState extends State<Search> {
           child: GestureDetector(
             onTap: () {
               // Get.to(SearchFocus()); // Get.to로 이동하면서 이전 페이지를 기억하지 않음.
-              Navigator.push(context,
+              Navigator.push(context, // 중복라우팅 관리. 여기는 Navigator.push로 라우팅을 따로 관리함.
                   MaterialPageRoute(builder: (context) => const SearchFocus()));
             },
             child: Container(

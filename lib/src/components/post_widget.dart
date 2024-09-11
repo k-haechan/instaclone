@@ -40,7 +40,7 @@ class PostWidget extends StatelessWidget {
     );
   }
 
-  Widget _infoCount() {
+  Widget _infoCount() { // 좋아요, 댓글, dm, 북마크
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal:15.0),
       child: Row(
@@ -59,7 +59,7 @@ class PostWidget extends StatelessWidget {
     );
   }
 
-  Widget _infoDescription() {
+  Widget _infoDescription() { // 닉네임, 설명, 댓글, 시간
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
