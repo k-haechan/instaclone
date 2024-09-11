@@ -1,10 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:instaclone/src/app.dart';
+import 'package:instaclone/src/root.dart';
 
+import 'firebase_options.dart';
 import 'src/binding/init_bindings.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   runApp(const MyApp());
 }
 
@@ -29,7 +35,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialBinding: InitBinding(), // 초기 바인딩 등록 (빈 객체 생성과 유사)
-      home: const App(),
+      home: const Root(),
     );
   }
 }
