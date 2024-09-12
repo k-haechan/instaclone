@@ -22,6 +22,7 @@ samples, guidance on mobile development, and a full API reference.
 - 리스트 생성: 1.[], 2.List.generate(), 3.toList()
 - PreferredSize : AppBar의 사이즈를 설정할 수 있도록 하는 위젯
 - 양 쪽 끝에 배치. leading, action을 사용하지 않아도, Row에서 MainAxisAlginment를 spaceBetween하면 됨.
+- 초기 설정값은 MaterialApp의 initialBinding을 통해서 할 수 있다.
 
 - 리팩토링 1. IconPath의 image파일을 svg로 변경하면 됨. -> static getter 굳이? static field로 변경
 - Pop 구현을 Get.back()으로 바꾸자.

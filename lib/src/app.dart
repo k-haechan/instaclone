@@ -8,7 +8,7 @@ import 'package:instaclone/src/pages/search.dart';
 import 'components/image_data.dart';
 import 'controller/bottom_nav_controller.dart';
 
-class App extends GetView<BottomNavController> {
+class App extends GetView<BottomNavController> { // Get.find<BottomNavController>()없이도 사용가능
   const App({super.key});
 
   @override
