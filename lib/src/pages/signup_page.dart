@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:instaclone/src/controller/auth_controller.dart';
 import 'package:instaclone/src/models/instagram_user.dart';
 
@@ -13,7 +16,11 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   TextEditingController _nicknameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  
+  final ImagePicker _picker = ImagePicker();
+  XFile? thumbnailXFile;
+
+  void update() => setState(() {}); // re-build(re-rendering)
+
   Widget _avatar() {
     return Column(
       children: [
@@ -23,15 +30,19 @@ class _SignupPageState extends State<SignupPage> {
           child: SizedBox(
             width: 100,
             height: 100,
-            child: Image.asset(
-              'assets/images/default_image.png',
-              fit: BoxFit.cover,
-            ),
+            child: thumbnailXFile != null
+                ? Image.file(File(thumbnailXFile!.path), fit: BoxFit.cover)
+                : Image.asset('assets/images/default_image.png',
+                    fit: BoxFit.cover),
           ),
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            thumbnailXFile = await _picker.pickImage(
+                source: ImageSource.gallery, imageQuality: 10);
+            update();
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue,
             shape: RoundedRectangleBorder(
@@ -64,7 +75,7 @@ class _SignupPageState extends State<SignupPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50.0),
       child: TextField(
-        controller:_descriptionController,
+        controller: _descriptionController,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(10),
           hintText: '설명',
@@ -111,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
               nickname: _nicknameController.text,
               description: _descriptionController.text,
             );
-            AuthController.to.signUp(signupUser);
+            AuthController.to.signUp(signupUser, thumbnailXFile);
           },
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(

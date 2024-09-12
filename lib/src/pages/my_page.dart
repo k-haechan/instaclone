@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:instaclone/src/components/avatar_widget.dart';
 import 'package:instaclone/src/components/image_data.dart';
 import 'package:instaclone/src/components/user_card.dart';
+import 'package:instaclone/src/controller/mypage_controller.dart';
 
-class MyPage extends StatefulWidget {
+class MyPage extends GetView<MypageController> {
   const MyPage({super.key});
-
-  @override
-  State<MyPage> createState() => _MyPageState();
-}
-
-class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
-  late TabController _tabController;
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
 
   Widget _statisticsOne(String title, int value) {
     return Column(
@@ -37,37 +27,38 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
   Widget _informagtion() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const AvatarWidget(
-                thumbPath:
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSd7UxYCzowiUdcQsiDNbm6lO8vxzqNpu4PQ&s',
-                nickname: '술맛여행놈',
-                type: AvatarType.TYPE1,
-                size: 80,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(child: _statisticsOne('post', 15)),
-                      Expanded(child: _statisticsOne('Followers', 11)),
-                      Expanded(child: _statisticsOne('Follwing', 4)),
-                    ]),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          const Text(
-            '안녕하세요. 술이 좋아 아저씨 입니다.',
-            style: TextStyle(fontSize: 13, color: Colors.black),
-          ),
-        ],
+      child: Obx(()
+        => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AvatarWidget(
+                  thumbPath: controller.targetUser.value.thumbnail!,
+                  nickname: '술맛여행놈',
+                  type: AvatarType.TYPE1,
+                  size: 80,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(child: _statisticsOne('post', 15)),
+                        Expanded(child: _statisticsOne('Followers', 11)),
+                        Expanded(child: _statisticsOne('Follwing', 4)),
+                      ]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              controller.targetUser.value.description!,
+              style: const TextStyle(fontSize: 13, color: Colors.black),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -159,7 +150,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
       indicatorColor: Colors.black,
       indicatorSize: TabBarIndicatorSize.tab,
       indicatorWeight: 1,
-      controller: _tabController,
+      controller: controller.tabController,
       tabs: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -197,11 +188,11 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
       appBar: AppBar(
         elevation: 0,
         centerTitle: false,
-        title: const Text(
-          '술맛여행놈',
-          style: TextStyle(
+        title: Obx(()=>Text(
+          controller.targetUser.value.nickname!,
+          style: const TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
-        ),
+        ),),
         actions: [
           GestureDetector(
             onTap: () {},
