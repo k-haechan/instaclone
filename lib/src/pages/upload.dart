@@ -3,80 +3,28 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:instaclone/src/components/image_data.dart';
+import 'package:instaclone/src/controller/upload_controller.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-class Upload extends StatefulWidget {
+class Upload extends GetView<UploadController> {
   // stateless + GetX로도 할 수 있음. 여기선 GetX에 대한 의존성을 줄이기 위해 stateful로 작성
-  const Upload({super.key});
-
-  @override
-  State<Upload> createState() => _UploadState();
-}
-
-class _UploadState extends State<Upload> {
-  var albums = <AssetPathEntity>[]; // AssetPathEntity는 앨범을 나타내는 클래스
-  var headerTitle = '';
-  var imageList = <AssetEntity>[]; // AssetEntity는 사진이나 비디오를 나타내는 클래스
-  AssetEntity? selectedImage;
-
-  @override
-  void initState() {
-    super.initState();
-    print("initState");
-
-    _loadPhotos(); // GetX로 하는 방법은? Oninit(){}로 작성하면 될듯?
-  }
-
-  void _loadPhotos() async {
-    // Get.find<UploadController>().fetchPhotos();
-    var result = await PhotoManager
-        .requestPermissionExtend(); // await문법이 아니라 then문법도 사용가능
-    if (result.isAuth) {
-      albums = (await PhotoManager.getAssetPathList(
-        type: RequestType.image,
-        filterOption: FilterOptionGroup(
-          imageOption: FilterOption(
-              sizeConstraint: SizeConstraint(minHeight: 100, minWidth: 100)),
-          orders: [
-            const OrderOption(asc: false, type: OrderOptionType.createDate)
-          ],
-        ),
-      ));
-      _loadData();
-    } else {
-      print("권한이 없습니다.");
-      print("RESULT${result}");
-    }
-  }
-
-  void _loadData() async {
-    headerTitle = albums.first.name;
-    await _pagingPhotos();
-    print(albums.first.name);
-    setState(() {}); // 중괄호 안에 상태변경로직을 담으면 되지만 그냥 랜더링만 하면 돼서 빈칸으로 둠
-  }
-
-  _pagingPhotos() async {
-    var photos = await albums.first
-        .getAssetListPaged(page: 0, size: 28); // 앨범에서 30개씩 가져오기 -> 28개로 수정
-    imageList.addAll(photos);
-    selectedImage = imageList.first;
-    print(imageList.length);
-    print(imageList);
-  }
+  Upload({super.key});
 
   Widget _imagePreview() {
-    var width = MediaQuery.of(context).size.width; // 화면의 전체 너비
-    return Container(
-      width: width,
-      height: width,
-      color: Colors.grey[400],
-      child: _photo(selectedImage, width.toInt(), builder: (data) {
-        return Image.memory(
-          data,
-          fit: BoxFit.cover,
-        );
-      }),
+    var width = Get.width; // 화면의 전체 너비
+    return Obx(
+      () => Container(
+        width: width,
+        height: width,
+        color: Colors.grey[400],
+        child: _photo(controller.selectedImage.value, width.toInt(),
+            builder: (data) {
+          return Image.memory(
+            data,
+            fit: BoxFit.cover,
+          );
+        }),
+      ),
     );
   }
 
@@ -91,58 +39,72 @@ class _UploadState extends State<Upload> {
             child: GestureDetector(
               onTap: () {
                 showModalBottomSheet(
-                  context: context,
+                  context: Get.context!,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  isScrollControlled: true,
+                  isScrollControlled:
+                      controller.albums.length > 10 ? true : false,
                   constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    maxHeight: MediaQuery.of(Get.context!).size.height -
+                        MediaQuery.of(Get.context!).padding.top,
                   ),
-                  builder: (_) => Container(
-                    // height: 200,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 7),
-                            width: 40,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(5),
+                  builder: (_) => 
+                     Container(
+                      // height: 200,
+                      height: controller.albums.length > 10
+                          ? Size.infinite.height
+                          : controller.albums.length * 60,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Center(
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 7),
+                              width: 40,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: List.generate(
-                                albums.length,
-                                (idx) => Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 20),
-                                  child: Text(albums[idx].name),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: List.generate(
+                                  controller.albums.length,
+                                  (idx) => GestureDetector(
+                                    onTap:(){
+                                      controller.changeAlbum(controller.albums[idx]);
+                                      Get.back();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 20),
+                                      child: Text(controller.albums[idx].name), //recent, like, ...
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                 );
               },
               child: Row(
                 children: [
-                  Text(
-                    headerTitle,
-                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                  Obx(
+                    () => Text(
+                      controller.headerTitle.value,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
+                    ),
                   ),
                   Icon(Icons.arrow_drop_down),
                 ],
@@ -184,13 +146,16 @@ class _UploadState extends State<Upload> {
     );
   }
 
-  Widget _photo(AssetEntity? entity, int size,
+  Widget _photo(
+      // 사진을 불러오는 함수
+      AssetEntity? entity,
+      int size, // AssetEntity는 PhotoManager에서 제공하는 클래스
       {required Widget Function(Uint8List) builder}) {
-    if (entity == null) {
-      return Container();
+    if (controller.imageList.isEmpty) {
+      // 사진이 로드가 되어있지 않으면
+      return Container(); // 빈 컨테이너를 반환
     }
-    var thumbnail = entity.thumbnailDataWithSize(ThumbnailSize(size, size));
-    print("thumbnail: $thumbnail");
+    var thumbnail = entity!.thumbnailDataWithSize(ThumbnailSize(size, size));
     return FutureBuilder(
         future: thumbnail,
         builder: (_, AsyncSnapshot<Uint8List?> snapshot) {
@@ -212,7 +177,8 @@ class _UploadState extends State<Upload> {
   }
 
   Widget _imageSelectList() {
-    return GridView.builder(
+    // 이미지 미리보기
+    return Obx(()=> GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -221,28 +187,27 @@ class _UploadState extends State<Upload> {
           mainAxisSpacing: 1, // 메인축 방향의 간격
           crossAxisSpacing: 1, // 가로 간격
         ),
-        itemCount: imageList.length,
+        itemCount: controller.imageList.length,
         itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            child: _photo(imageList[index], 200, builder: (data) {
-              // 심지어 data는 _photo위젯에 종속적임. 별로 좋은 패턴은 아닌것같은디
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedImage = imageList[index];
-                  });
-                },
-                child: Opacity(
-                  opacity: imageList[index] == selectedImage ? 0.3 : 1,
+          return _photo(controller.imageList[index], 200, builder: (data) {
+            // 심지어 data는 _photo위젯에 종속적임. 별로 좋은 패턴은 아닌것같은디
+            return GestureDetector(
+              onTap: () {
+                controller.changeSeletedImage(controller.imageList[index]);
+              },
+              child: Obx(()=>Opacity(
+                  opacity: controller.imageList[index] ==
+                          controller.selectedImage.value
+                      ? 0.3
+                      : 1,
                   child: Image.memory(
                     data,
                     fit: BoxFit.cover,
                   ),
                 ),
-              );
-            }),
-          );
-        });
+            ));
+          });
+        }));
   }
 
   @override
@@ -268,7 +233,7 @@ class _UploadState extends State<Upload> {
                 fontSize: 20)),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: controller.gotoImageFilter,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: ImageData(
@@ -282,9 +247,9 @@ class _UploadState extends State<Upload> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _imagePreview(),
-            _header(),
-            _imageSelectList(),
+            _imagePreview(), // 이미지 미리보기
+            _header(), // 헤더..? 이미지 폴더 명 + 여러 항목 선택, 카메라 아이콘
+            _imageSelectList(), // 이미지 선택 리스트
           ],
         ),
       ),

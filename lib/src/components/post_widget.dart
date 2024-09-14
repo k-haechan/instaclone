@@ -3,9 +3,12 @@ import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/src/components/avatar_widget.dart';
 import 'package:instaclone/src/components/image_data.dart';
-
+import 'package:instaclone/src/models/post.dart';
+import 'package:timeago/timeago.dart' as timeago;
 class PostWidget extends StatelessWidget {
-  const PostWidget({super.key});
+  final Post post;
+
+  const PostWidget({super.key, required this.post});
 
   Widget _header() {
     return Padding(
@@ -13,11 +16,10 @@ class PostWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const AvatarWidget(
+          AvatarWidget(
             type: AvatarType.TYPE3,
-            thumbPath:
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSd7UxYCzowiUdcQsiDNbm6lO8vxzqNpu4PQ&s',
-            nickname: 'sojuKing',
+            thumbPath:post.userInfo!.thumbnail!,
+            nickname: post.userInfo!.nickname!,
             size: 40,
           ),
           GestureDetector(
@@ -34,8 +36,8 @@ class PostWidget extends StatelessWidget {
 
   Widget _image() {
     return CachedNetworkImage(
-      imageUrl: 'https://cdn.hotplacehunter.co.kr/hotplacehunter/2023/12/21103035/3.%EB%8F%84%EB%9D%BD-seuleee____1%EB%8B%98-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-2-2.jpg',
-      width: double.infinity,
+      imageUrl: post.thumbnail!,
+      // width: double.infinity,
       // height: 400,
     );
   }
@@ -60,31 +62,44 @@ class PostWidget extends StatelessWidget {
   }
 
   Widget _infoDescription() { // 닉네임, 설명, 댓글, 시간
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 10),
-          Text('좋아요 100개', style: TextStyle(fontWeight: FontWeight.bold),),
-          SizedBox(height: 5),
-          Row(
-            children: [
-              Text('sojuKing', style: TextStyle(fontWeight: FontWeight.bold),),
-              SizedBox(width: 5),
-              Text('오늘은 맛있는 술을 마셨어요.', style: TextStyle(fontSize: 13),)
-            ],
-          ),
-          ExpandableText('댓글정리댓글 길게 댓글 안돼 댓글 적당히\ndgfd\ngjhgjh', style: TextStyle(fontSize: 13),
-          maxLines: 2,
+          Text('좋아요 ${post.likeCount??0 }개', style: TextStyle(fontWeight: FontWeight.bold),),
+          ExpandableText(post.description??'', prefixText:post.userInfo!.nickname,
+          onPrefixTap: (){print('postWidget._infoDescription.onPrefixTap');},
+          prefixStyle: TextStyle(fontWeight: FontWeight.bold),
+          expandText: '더보기',
+          collapseText: '접기',
+          maxLines: 3,
           expandOnTextTap: true,
           collapseOnTextTap: true,
-          prefixText:'김해찬',prefixStyle: TextStyle(fontWeight: FontWeight.bold), expandText: '더보기', collapseText: '접기',),
-          SizedBox(height: 5),
-          Text('댓글 10개 모두 보기', style: TextStyle(color: Colors.grey),),
-          // _replyTextBtn(),
-          SizedBox(height: 5),
-          Text('1시간 전', style: TextStyle(color: Colors.grey),)
+          linkColor: Colors.grey,
+          )
+
+
+          // SizedBox(height: 10),
+          // Text('좋아요 ${post.likeCount??0}개', style: TextStyle(fontWeight: FontWeight.bold),),
+          // SizedBox(height: 5),
+          // Row(
+          //   children: [
+          //     Text('sojuKing', style: TextStyle(fontWeight: FontWeight.bold),),
+          //     SizedBox(width: 5),
+          //     Text('오늘은 맛있는 술을 마셨어요.', style: TextStyle(fontSize: 13),)
+          //   ],
+          // ),
+          // ExpandableText('댓글정리댓글 길게 댓글 안돼 댓글 적당히\ndgfd\ngjhgjh', style: TextStyle(fontSize: 13),
+          // maxLines: 2,
+          // expandOnTextTap: true,
+          // collapseOnTextTap: true,
+          // prefixText:'김해찬',prefixStyle: TextStyle(fontWeight: FontWeight.bold), expandText: '더보기', collapseText: '접기',),
+          // SizedBox(height: 5),
+          // Text('댓글 10개 모두 보기', style: TextStyle(color: Colors.grey),),
+          // // _replyTextBtn(),
+          // SizedBox(height: 5),
+          // Text('1시간 전', style: TextStyle(color: Colors.grey),)
         ],
       ),
     );
@@ -101,7 +116,9 @@ class PostWidget extends StatelessWidget {
   Widget _dateAgo() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Text('1시간 전', style: TextStyle(color: Colors.grey, fontSize: 11)),
+      child: Text(
+        timeago.format(post.createAt!),
+        style: TextStyle(color: Colors.grey, fontSize: 11)),
     );
   }
 

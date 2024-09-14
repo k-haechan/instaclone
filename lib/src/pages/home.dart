@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:instaclone/src/components/avatar_widget.dart';
 import 'package:instaclone/src/components/image_data.dart';
 import 'package:instaclone/src/components/post_widget.dart';
+import 'package:instaclone/src/controller/home_controller.dart';
 
-class Home extends StatelessWidget {
+class Home extends GetView<HomeController> {
   const Home({super.key});
 
   Widget _myStory() {
@@ -23,17 +25,15 @@ class Home extends StatelessWidget {
             width: 25,
             height: 25,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue,
-              border: Border.all(color : Colors.white, width: 3)
-            ),
+                shape: BoxShape.circle,
+                color: Colors.blue,
+                border: Border.all(color: Colors.white, width: 3)),
             child: Icon(Icons.add, color: Colors.white, size: 20),
           ),
         )
       ],
     );
   }
-
 
   Widget _storyBoardList() {
     return SingleChildScrollView(
@@ -42,7 +42,8 @@ class Home extends StatelessWidget {
         const SizedBox(width: 20),
         _myStory(),
         const SizedBox(width: 5),
-        ...List.generate( // 이부분이 Column으로 변경해야 이름도 같이 나타낼 수 있음
+        ...List.generate(
+            // 이부분이 Column으로 변경해야 이름도 같이 나타낼 수 있음
             100,
             (index) => AvatarWidget(
                 thumbPath:
@@ -58,8 +59,11 @@ class Home extends StatelessWidget {
   }
 
   Widget _postList() {
-    return Column(children: List.generate(50, (idx)=>PostWidget()).toList());
+    return Obx(() => Column(
+        children: List.generate(controller.postList.length,
+            (idx) => PostWidget(post: controller.postList[idx]))));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,11 +86,7 @@ class Home extends StatelessWidget {
           ],
         ),
         body: ListView(
-          children: [
-            _storyBoardList(),
-            SizedBox(height: 10),
-            _postList()
-          ],
+          children: [_storyBoardList(), SizedBox(height: 10), _postList()],
         ));
   }
 }

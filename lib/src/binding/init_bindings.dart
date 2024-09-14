@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:instaclone/src/controller/auth_controller.dart';
+import 'package:instaclone/src/controller/home_controller.dart';
 import 'package:instaclone/src/controller/mypage_controller.dart';
 
 import '../controller/bottom_nav_controller.dart';
@@ -14,5 +15,6 @@ class InitBinding extends Bindings{
   }
   static addtionalBinding(){
     Get.put(MypageController(), permanent: true);
+    Get.put(HomeController(), permanent: true);
   }
 }

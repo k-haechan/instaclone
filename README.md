@@ -23,6 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 - PreferredSize : AppBar의 사이즈를 설정할 수 있도록 하는 위젯
 - 양 쪽 끝에 배치. leading, action을 사용하지 않아도, Row에서 MainAxisAlginment를 spaceBetween하면 됨.
 - 초기 설정값은 MaterialApp의 initialBinding을 통해서 할 수 있다.
+- TextEditingController와 같은 기본 컨트롤러도 모두 GetX컨트롤러 파일에 위임한다.
 
 - 리팩토링 1. IconPath의 image파일을 svg로 변경하면 됨. -> static getter 굳이? static field로 변경
 - Pop 구현을 Get.back()으로 바꾸자.
@@ -31,3 +32,5 @@ samples, guidance on mobile development, and a full API reference.
 - SizedBox에 너무 의존적인 레이아웃? _myStory와 InstaHomeLogo의 선을 맞추는데 SizedBox보단 다른 방법이 좋지 않을까?
 - BottomNavigate고정. - 심지어 여기는 getX도 아닌 기본 플러터로 구현했다.? -> qppBar 5_ 24:47
     - 기존엔 Bottom 고정하고 body를 변경하면서 페이지를 바꿨는데 searchFocus는 아예 페이지 채로 변경이기에.
+- keyBoard를 unfocus하는 방법이 그런거밖에 없는가?
+- upload같은 경우는 dto(예를 들면 post)를 만드는 것이 좋다.

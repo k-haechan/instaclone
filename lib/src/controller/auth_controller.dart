@@ -42,7 +42,7 @@ class AuthController extends GetxController {
     }
   }
 
-  UploadTask uploadXfile(XFile xfile, String filename){
+  UploadTask uploadXfile(XFile xfile, String filename){ // XFile은 주로 image_picker에서 사용됨.
     var file = File(xfile.path);
     var ref = FirebaseStorage.instance.ref().child('users').child(filename);
     final metadata = SettableMetadata(
